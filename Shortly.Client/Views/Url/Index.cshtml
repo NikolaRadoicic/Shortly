@@ -1,10 +1,50 @@
-﻿
-    
+﻿@model List<Url>;
 
 @{
-    var currentDateTime = DateTime.UtcNow;
+    ViewData["Title"] = "All short links";
 }
 
+<div class="container">
+    <a class="btn btn-outline-success"
+        asp-controller="Home"
+        asp-action="Index">
+        Add new
+    </a>
+</div>
 
-<h4>@ViewData["ShortenedUrl"]</h4>
+<div class="container">
+    <table class="table table-striped"
+        <thead>
+            <tr></tr>
+            <th scope="col">#</th>
+            <th scope="col">Original link</th>
+            <th scope="col">Shortened link</th>
+            <th scope="col">Number of clicks</th>
+            <th scope="col">User</th>
+            <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody>
 
+            @foreach(var url in Model)
+            {
+                    <tr>
+                    <td>@url.Id</td>
+                    <td>@url.OriginalLink</td>
+                    <td>@url.ShortLink</td>
+                    <td>@url.NumberOfClicks</td>
+                    <td>@url.UserId</td>
+                    <td>
+                        <a class="btn btn-outline-danger" asp-controller="Url" asp-action="Remove">
+                            Remove
+                        </a>
+                    </td>
+                </tr>
+            }
+
+            
+        </tbody>
+    ></table>
+
+
+</div>
