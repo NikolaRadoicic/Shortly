@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Shortly.Client.Data.ViewModels;
 using System.Diagnostics;
 
 namespace Shortly.Client.Controllers
@@ -14,11 +15,16 @@ namespace Shortly.Client.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var newUrl = new PostUrlVM();
+            return View(newUrl);
         }
 
        
-
+        public IActionResult ShortenUrl(PostUrlVM postUrlVM)
+        {
+            
+            return RedirectToAction("Index");
+        }
        
     }
 }
