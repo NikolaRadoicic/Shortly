@@ -30,8 +30,11 @@
                     type="text" 
                     class="url-input" 
                     name="urlToShorten" 
-                    placeholder="Shorten a link here..." />
-                    <span class="alert"></span>
+                    placeholder="Shorten a link here..."
+                    autocomplete="off"/>
+
+                <span asp-validation-for="Url" class="text-danger"></span>
+                    
                 </div>
                 <button type="submit" class="btn btn-lg" style="">Shorten It !</button>
             </form>

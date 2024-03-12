@@ -22,6 +22,12 @@ namespace Shortly.Client.Controllers
        
         public IActionResult ShortenUrl(PostUrlVM postUrlVM)
         {
+            //Validate the model
+
+            if(!ModelState.IsValid)
+            {
+                return View("Index", postUrlVM);
+            }
             
             return RedirectToAction("Index");
         }
