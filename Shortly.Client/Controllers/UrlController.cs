@@ -1,45 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shortly.Client.Data.ViewModels;
-using System.Collections.Generic; 
+using Shortly.Data;
+using System.Collections.Generic;
 
 namespace Shortly.Client.Controllers
 {
     public class UrlController : Controller
     {
+        private readonly AppDbContext _context;
+
+        public UrlController(AppDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            // Fake db data
-            var allUrls = new List<GetUrlVM>()
-            {
-                new GetUrlVM()
+            var allUrls = _context.Urls
+                .Select(url => new GetUrlVM
                 {
-                    Id = 1,
-                    OriginalLink = "https://link1.com",
-                    ShortLink = "sh1",
-                    NumberOfClicks = 1,
-                    UserId = 1,
-                },
+                    Id = url.Id,
+                    OriginalLink = url.OriginalLink,
+                    ShortLink = url.ShortLink,
+                    NumberOfClicks = url.NumberOfClicks,
+                    UserId = url.UserId
+                })
+                .ToList();
 
-                new GetUrlVM()
-                {
-                    Id = 2,
-                    OriginalLink = "https://link2.com", // Corrected link
-                    ShortLink = "sh2",
-                    NumberOfClicks = 2,
-                    UserId = 2,
-                },
-
-                new GetUrlVM()
-                {
-                    Id = 3,
-                    OriginalLink = "https://link3.com",
-                    ShortLink = "sh3",
-                    NumberOfClicks = 3,
-                    UserId = 3,
-                } 
-            };
-
-            // Pass the data to the view
             return View(allUrls);
         }
 
@@ -48,7 +35,7 @@ namespace Shortly.Client.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Remove(int id) 
+        public IActionResult Remove(int id)
         {
             return View();
         }
