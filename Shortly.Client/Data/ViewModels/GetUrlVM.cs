@@ -10,5 +10,7 @@
         public int NumberOfClicks { get; set; }
 
         public int? UserId { get; set; }
+
+        public GetUserVM? User { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shortly.Client.Data.ViewModels;
 using Shortly.Data;
+using Shortly.Data.Migrations;
 using System.Collections.Generic;
 
 namespace Shortly.Client.Controllers
@@ -16,14 +18,22 @@ namespace Shortly.Client.Controllers
 
         public IActionResult Index()
         {
-            var allUrls = _context.Urls
+            var allUrls = _context
+                .Urls
+                .Include(n => n.User)
                 .Select(url => new GetUrlVM
                 {
                     Id = url.Id,
                     OriginalLink = url.OriginalLink,
                     ShortLink = url.ShortLink,
                     NumberOfClicks = url.NumberOfClicks,
-                    UserId = url.UserId
+                    UserId = url.UserId,
+
+                    User = url.User != null ? new GetUserVM()
+                    {
+                        Id = url.User.Id,
+                        FullName = url.User.FullName
+                    } : null
                 })
                 .ToList();
 
@@ -37,12 +47,11 @@ namespace Shortly.Client.Controllers
 
         public IActionResult Remove(int id)
         {
-            return View();
-        }
+            var url = _context.Urls.FirstOrDefault(n => n.Id == id);
+            _context.Urls.Remove(url);
+            _context.SaveChanges();
 
-        public IActionResult Remove(int userId, int linkId)
-        {
-            return View();
+            return RedirectToAction("Index");
         }
     }
 }

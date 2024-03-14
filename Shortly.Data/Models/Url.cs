@@ -20,5 +20,7 @@ namespace Shortly.Data.Models
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateUpdated { get; set; }
+
+        public User? User { get; set; }
     }
 }
