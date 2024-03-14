@@ -1,43 +1,35 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shortly.Client.Data.ViewModels;
 using Shortly.Data;
 using Shortly.Data.Migrations;
+using Shortly.Data.Models;
+using Shortly.Data.Services;
 using System.Collections.Generic;
 
 namespace Shortly.Client.Controllers
 {
     public class UrlController : Controller
     {
-        private readonly AppDbContext _context;
+        
+        private IUrlsService _urlsService;
+        private readonly IMapper _mapper;
 
-        public UrlController(AppDbContext context)
+        public UrlController(IUrlsService urlsService, IMapper mapper)
         {
-            _context = context;
+            _urlsService = urlsService;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
         {
-            var allUrls = _context
-                .Urls
-                .Include(n => n.User)
-                .Select(url => new GetUrlVM
-                {
-                    Id = url.Id,
-                    OriginalLink = url.OriginalLink,
-                    ShortLink = url.ShortLink,
-                    NumberOfClicks = url.NumberOfClicks,
-                    UserId = url.UserId,
+            var allUrls = _urlsService.GetUrls();
 
-                    User = url.User != null ? new GetUserVM()
-                    {
-                        Id = url.User.Id,
-                        FullName = url.User.FullName
-                    } : null
-                })
-                .ToList();
+            var mappedAllUrls = _mapper.Map<List<Url>, List<GetUrlVM>>(allUrls);
+                
 
-            return View(allUrls);
+            return View(mappedAllUrls);
         }
 
         public IActionResult Create()
@@ -47,9 +39,7 @@ namespace Shortly.Client.Controllers
 
         public IActionResult Remove(int id)
         {
-            var url = _context.Urls.FirstOrDefault(n => n.Id == id);
-            _context.Urls.Remove(url);
-            _context.SaveChanges();
+            _urlsService.Delete(id);
 
             return RedirectToAction("Index");
         }
