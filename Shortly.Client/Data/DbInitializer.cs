@@ -1,4 +1,6 @@
-﻿using Shortly.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using Shortly.Client.Helpers.Roles;
+using Shortly.Data;
 using Shortly.Data.Migrations;
 using Shortly.Data.Models;
 
@@ -6,38 +8,58 @@ namespace Shortly.Client.Data
 {
     public static class DbInitializer
     {
-        public static void SeedDefaultData(IApplicationBuilder applicationBuilder)
+        public static async Task SeedDefaultUsersAndRolesAsync(IApplicationBuilder applicationBuilder)
         {
-            using(var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
+            using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
-                var dbContext = serviceScope.ServiceProvider.GetService<AppDbContext>();
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-                if (!dbContext.Users.Any()) 
+                //user related data
+
+                var simpleUserRole = Role.User;
+                var simpleUserEmail = "user@shrtly.com";
+                if (!await roleManager.RoleExistsAsync(simpleUserRole))
+                    await roleManager.CreateAsync(new IdentityRole() { Name = simpleUserRole });
+
+                if(await userManager.FindByEmailAsync(simpleUserEmail) == null)
                 {
-                    dbContext.Users.AddRange(new AppUser()
+                    var simpleUser = new AppUser()
                     {
-                        FullName = "Nikola Radoicic",
-                        Email = "nikola.radoicic@gmail.com"
-                    });
+                        FullName = "Simple User",
+                        UserName = "simple-user",
+                        Email = simpleUserEmail,
+                    };
+                    await userManager.CreateAsync(simpleUser, "Coding@1234?");
 
-                    dbContext.SaveChanges();
+                    //Add user to role
 
-                
-                if (!dbContext.Urls.Any())
+                    await userManager.AddToRoleAsync(simpleUser, simpleUserRole);
+                }
+
+                //admin 
+
+                var adminUserRole = Role.Admin;
+                var adminUserEmail = "admin@shrtly.com";
+                if (!await roleManager.RoleExistsAsync(adminUserRole))
+                    await roleManager.CreateAsync(new IdentityRole() { Name = adminUserRole });
+
+                if (await userManager.FindByEmailAsync(adminUserEmail) == null)
+                {
+                    var adminUser = new AppUser()
                     {
-                        dbContext.Urls.Add(new Url()
-                        {
-                            OriginalLink = "https://google.com",
-                            ShortLink = "ggl",
-                            NumberOfClicks = 29,
-                            DateCreated = DateTime.Now,
-                            UserId = dbContext.Users.First().Id
-                        });
+                        FullName = "Admin User",
+                        UserName = "admin-user",
+                        Email = adminUserEmail,
+                    };
+                    await userManager.CreateAsync(adminUser, "Coding@1234?");
 
-                        dbContext.SaveChanges();
-                    }
+                    //Add user to role
+
+                    await userManager.AddToRoleAsync(adminUser, adminUserRole);
                 }
             }
-        }
+
+        }   
     }
 }

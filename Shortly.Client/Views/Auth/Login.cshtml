@@ -13,8 +13,9 @@
                
                 <form
                     asp-controller="Auth"
-                    asp-action="LoginSubmitted"
-                        >
+                    asp-action="LoginSubmitted">
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
 
                         <div class="form-group mb-3">
                             <label for="emailAddress">Email address</label>
