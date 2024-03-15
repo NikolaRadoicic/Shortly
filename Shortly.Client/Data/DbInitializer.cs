@@ -14,7 +14,7 @@ namespace Shortly.Client.Data
 
                 if (!dbContext.Users.Any()) 
                 {
-                    dbContext.Users.AddRange(new User()
+                    dbContext.Users.AddRange(new AppUser()
                     {
                         FullName = "Nikola Radoicic",
                         Email = "nikola.radoicic@gmail.com"

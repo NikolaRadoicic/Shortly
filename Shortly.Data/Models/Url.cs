@@ -15,12 +15,12 @@ namespace Shortly.Data.Models
 
         public int NumberOfClicks { get; set; }
 
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
 
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateUpdated { get; set; }
 
-        public User? User { get; set; }
+        public AppUser? User { get; set; }
     }
 }
