@@ -9,7 +9,7 @@ namespace Shortly.Data.Services
 {
     public interface IUrlsService
     {
-        Task<List<Url>> GetUrlsAsync();
+        Task<List<Url>> GetUrlsAsync(string userId, bool isAdmin);
         Task<Url> AddAsync(Url url);
         Task<Url> GetByIdAsync(int id);
 
